@@ -1,6 +1,7 @@
+#Mac
+.DS_Store
 
 #Pycharm/intelli
-
 .idea/
 
 # Byte-compiled / optimized / DLL files
