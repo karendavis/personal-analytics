@@ -1,2 +1,4 @@
 pytest
 pandas
+opencv-python
+pytesseract
