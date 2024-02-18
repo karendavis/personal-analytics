@@ -63,11 +63,9 @@ def filter_empty_text_items(text_items: list) -> list:
     return text_items
 
 
-def create_screen_time_item_from_text(text_items: list) -> list:
+def create_screen_time_item_from_text(text_items: list) -> ScreenTimeItem:
     screen_time_date_idx = [i for i, item in enumerate(text_items) if 'Today,' in item][0]
-
     application_indexes = [i for i, item in enumerate(text_items) if (any(name in item for name in application_names))]
-
     applications = []
     for index in application_indexes:
         applications.append(ApplicationItem(application_name=text_items[index], application_time=text_items[index+1]))
