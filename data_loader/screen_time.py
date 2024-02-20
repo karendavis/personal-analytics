@@ -72,7 +72,13 @@ def filter_empty_text_items(text_items: list) -> list:
 
 
 def create_screen_time_item_from_text(text_items: list) -> ScreenTimeItem:
-    screen_time_date_idx = [i for i, item in enumerate(text_items) if 'Today,' in item][0]
+    screen_time_date_indexes = [i for i, item in enumerate(text_items) if 'Today,' in item]
+    if len(screen_time_date_indexes) == 0:
+        # Some files don't have 'Today, {date}' but a '{day_of_week}, {date}' pattern
+        day_of_week_pattern = re.compile("^((?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)),.*")
+        screen_time_date_idx = [i for i, item in enumerate(text_items) if re.search(day_of_week_pattern, item)][0]
+    else:
+        screen_time_date_idx = screen_time_date_indexes[0]
     application_indexes = [i for i, item in enumerate(text_items) if (any(name in item for name in application_names))]
     applications = []
     for index in application_indexes:
