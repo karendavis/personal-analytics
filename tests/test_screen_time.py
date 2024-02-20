@@ -37,7 +37,7 @@ def test_load_screen_time_data():
     assert results.shape == (2, 8)
 
 
-def test_load_screen_time_data_with_invalidate_folder_path():
+def test_load_screen_time_data_with_invalid_folder_path():
     fake_folder = "FakeFolder"
     with pytest.raises(FolderDoesNotExistError) as excinfo:
         results = load_screen_time_data(fake_folder)
