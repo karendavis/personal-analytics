@@ -4,6 +4,7 @@ import pytesseract
 import re
 from dataclasses import dataclass, asdict
 import glob
+import os
 
 
 @dataclass
@@ -29,10 +30,17 @@ class ScreenTimeItem:
         return dictionary
 
 
+class FolderDoesNotExistError(Exception):
+    pass
+
+
 application_names = ["Safari", "Messages", "DuckDuckGo", "MyFitnessPal", "Connect", "Gmail"]
 
 
 def load_screen_time_data(folder: str) -> pd.DataFrame:
+    if not os.path.isdir(folder):
+        raise FolderDoesNotExistError(f"Folder `{folder}` does not exist")
+
     image_files = glob.glob(f"{folder}/*.png")
     screen_time_data = []
     for image_file in image_files:

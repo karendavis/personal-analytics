@@ -1,5 +1,7 @@
+import pytest
+
 from data_loader.screen_time import ScreenTimeItem, ApplicationItem, load_screen_time_item, \
-    load_screen_time_data, create_screen_time_item_from_text
+    load_screen_time_data, create_screen_time_item_from_text, FolderDoesNotExistError
 
 mock_screen_time_data = ScreenTimeItem(date='Today, 13 February',
                                        total_time='3h 19min.',
@@ -33,6 +35,13 @@ folder_path = "test_data"
 def test_load_screen_time_data():
     results = load_screen_time_data(folder_path)
     assert results.shape == (2, 8)
+
+
+def test_load_screen_time_data_with_invalidate_folder_path():
+    fake_folder = "FakeFolder"
+    with pytest.raises(FolderDoesNotExistError) as excinfo:
+        results = load_screen_time_data(fake_folder)
+    assert str(excinfo.value) == f"Folder `{fake_folder}` does not exist"
 
 
 def test_load_screen_time_item():
