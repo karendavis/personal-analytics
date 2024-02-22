@@ -55,11 +55,16 @@ def load_screen_time_item(img_file: str) -> ScreenTimeItem:
     img = cv2.imread(img_file)
     ref = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     ref = cv2.threshold(ref, 200, 200, 200)[1]
-
     text = pytesseract.image_to_string(ref).split('\n')
     text = filter_empty_text_items(text)
-    screen_time_data = create_screen_time_item_from_text(text)
-    return screen_time_data
+    # Allow for the case where there is no screen time data
+    if "As this device is used, screen time will be" in text:
+        # get the date from the file name
+        screen_time_date = os.path.basename(img_file).split('at')[0]
+        return ScreenTimeItem(date=screen_time_date, total_time=0,
+                              applications=[])
+    else:
+        return create_screen_time_item_from_text(text)
 
 
 def filter_empty_text_items(text_items: list) -> list:
@@ -79,6 +84,7 @@ def create_screen_time_item_from_text(text_items: list) -> ScreenTimeItem:
         screen_time_date_idx = [i for i, item in enumerate(text_items) if re.search(day_of_week_pattern, item)][0]
     else:
         screen_time_date_idx = screen_time_date_indexes[0]
+
     application_indexes = [i for i, item in enumerate(text_items) if (any(name in item for name in application_names))]
     applications = []
     for index in application_indexes:

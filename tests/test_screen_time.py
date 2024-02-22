@@ -66,6 +66,12 @@ def test_load_screen_time_item_with_image_with_no_today_text_found():
     assert result.date == "Tuesday, 23 January"
 
 
+def test_load_screen_time_item_with_image_with_no_screen_time_data():
+    result = load_screen_time_item(f"{folder_path}/28 Jan 2024 at 10pm.png")
+    assert result is not None
+    assert result.date == "28 Jan 2024 "
+
+
 def test_create_screen_time_item_from_text():
     result = create_screen_time_item_from_text(mock_test_data)
     assert result is not None
