@@ -34,7 +34,7 @@ folder_path = "test_data"
 
 def test_load_screen_time_data():
     results = load_screen_time_data(folder_path)
-    assert results.shape == (4, 8)
+    assert results.shape == (5, 8)
 
 
 def test_load_screen_time_data_with_invalid_folder_path():
@@ -66,7 +66,13 @@ def test_load_screen_time_item_with_image_with_no_today_text_found():
     assert result.date == "Tuesday, 23 January"
 
 
-def test_load_screen_time_item_with_image_with_no_screen_time_data():
+def test_load_screen_time_item_with_image_with_yesterday_screen_time_data():
+    result = load_screen_time_item(f"{folder_path}/20 Feb 2024 at 10pm.png")
+    assert result is not None
+    assert result.date == "Yesterday, 19 February"
+
+
+def test_load_screen_time_item_with_no_screen_time_data():
     result = load_screen_time_item(f"{folder_path}/28 Jan 2024 at 10pm.png")
     assert result is not None
     assert result.date == "28 Jan 2024 "
