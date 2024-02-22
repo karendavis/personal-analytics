@@ -55,9 +55,7 @@ def load_screen_time_data(folder: str) -> pd.DataFrame:
 def load_screen_time_item(img_file: str) -> ScreenTimeItem:
     logging.info(f"Loading screen time data from this file: {img_file}")
     img = cv2.imread(img_file)
-    ref = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    ref = cv2.threshold(ref, 200, 200, 200)[1]
-    text = pytesseract.image_to_string(ref).split('\n')
+    text = convert_image_to_text(img)
     text = filter_empty_text_items(text)
     # Allow for the case where there is no screen time data
     if "As this device is used, screen time will be" in text:
@@ -67,6 +65,13 @@ def load_screen_time_item(img_file: str) -> ScreenTimeItem:
                               applications=[])
     else:
         return create_screen_time_item_from_text(text)
+
+
+def convert_image_to_text(img) -> list[str]:
+    ref = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    ref = cv2.threshold(ref, 200, 200, 200)[1]
+    text = pytesseract.image_to_string(ref).split('\n')
+    return text
 
 
 def filter_empty_text_items(text_items: list) -> list:
