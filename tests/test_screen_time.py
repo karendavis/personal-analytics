@@ -34,7 +34,7 @@ folder_path = "test_data"
 
 def test_load_screen_time_data():
     results = load_screen_time_data(folder_path)
-    assert results.shape == (2, 8)
+    assert results.shape == (4, 8)
 
 
 def test_load_screen_time_data_with_invalid_folder_path():
