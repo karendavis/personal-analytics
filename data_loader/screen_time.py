@@ -5,6 +5,7 @@ import re
 from dataclasses import dataclass, asdict
 import glob
 import os
+import logging
 
 
 @dataclass
@@ -52,6 +53,7 @@ def load_screen_time_data(folder: str) -> pd.DataFrame:
 
 
 def load_screen_time_item(img_file: str) -> ScreenTimeItem:
+    logging.info(f"Loading screen time data from this file: {img_file}")
     img = cv2.imread(img_file)
     ref = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     ref = cv2.threshold(ref, 200, 200, 200)[1]
