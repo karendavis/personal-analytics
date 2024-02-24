@@ -6,22 +6,30 @@ from dataclasses import dataclass, asdict
 import glob
 import os
 import logging
+
+from pytesseract import Output
+
 from data_loader.transforms import grayscale_to_white_text_black_background_transform, grayscale_to_black_text_transform
 
 
 @dataclass
 class ApplicationItem:
     application_name: str
-    application_time: str
+    application_hour: str
+    application_min: str
 
     def dict(self, index):
-        return {f'application_name_{index}': self.application_name, f'application_time_{index}': self.application_time}
+        return {f'application_name_{index}': self.application_name, f'application_hour_{index}': self.application_hour,
+                f'application_min_{index}': self.application_min}
 
 
 @dataclass
 class ScreenTimeItem:
-    date: str
-    total_time: str
+    day: str
+    month: str
+    year: str
+    total_hour: str
+    total_min: str
     applications: [ApplicationItem]
 
     def dict(self):
@@ -59,10 +67,19 @@ def load_screen_time_item(img_file: str) -> ScreenTimeItem:
     text = convert_image_to_text(img)
     text = filter_empty_text_items(text)
     # Allow for the case where there is no screen time data
-    if "As this device is used, screen time will be" in text:
+    no_data_message = "As this device is used, screen time will be reported here"
+    no_data_text = " ".join(text[-13:])
+    if no_data_message in no_data_text:
         # get the date from the file name
         screen_time_date = os.path.basename(img_file).split('at')[0]
-        return ScreenTimeItem(date=screen_time_date, total_time=0,
+        screen_time_day = screen_time_date.split(' ')[0]
+        screen_time_month = screen_time_date.split(' ')[1]
+        screen_time_year = screen_time_date.split(' ')[2]
+        return ScreenTimeItem(day=screen_time_day,
+                              month=screen_time_month,
+                              year=screen_time_year,
+                              total_hour='0',
+                              total_min='0',
                               applications=[])
     else:
         return create_screen_time_item_from_text(text)
@@ -70,16 +87,21 @@ def load_screen_time_item(img_file: str) -> ScreenTimeItem:
 
 def convert_image_to_text(image) -> list[str]:
     image = grayscale_to_black_text_transform(image)
-    text = pytesseract.image_to_string(image).split('\n')
+    text = pytesseract.image_to_data(image, output_type=Output.DICT)['text']
     return text
 
 
 def filter_empty_text_items(text_items: list) -> list:
     text_items = list(filter(None, text_items))
+    text_items = [item.replace('<', '') for item in text_items]
+    text_items = [item.replace('.', '') for item in text_items]
+    text_items = [item.replace('>', '') for item in text_items]
     text_items = list(filter(lambda item: item.strip(), text_items))
-    # This Safari is not the one we want to use for getting the time spent on the application
-    safari_regex = re.compile(r'<.*Safari')
-    text_items = [x for x in text_items if not safari_regex.match(x)]
+    # If there are more than two instances of "safari' in the image, the first is in the top left of the screen
+    # and not part of the applications with time. If there are more than 1 remove the first instance
+    remove_indexes = [i for i, item in enumerate(text_items) if 'Safari' in item]
+    if len(remove_indexes) > 1:
+        text_items.pop(remove_indexes[0])
     return text_items
 
 
@@ -95,7 +117,32 @@ def create_screen_time_item_from_text(text_items: list) -> ScreenTimeItem:
     application_indexes = [i for i, item in enumerate(text_items) if (any(name in item for name in application_names))]
     applications = []
     for index in application_indexes:
-        applications.append(ApplicationItem(application_name=text_items[index], application_time=text_items[index+1]))
+        applications.append(create_application_item_from_text(text_items, index))
 
-    return ScreenTimeItem(date=text_items[screen_time_date_idx], total_time=text_items[screen_time_date_idx + 1],
+    return ScreenTimeItem(day=text_items[screen_time_date_idx + 1],
+                          month=text_items[screen_time_date_idx + 2],
+                          year=2024,
+                          total_hour=text_items[screen_time_date_idx + 3],
+                          total_min=text_items[screen_time_date_idx + 4],
                           applications=applications)
+
+
+def create_application_item_from_text(text, application_index) -> ApplicationItem:
+    application_name = text[application_index]
+    time = text[application_index + 1]
+    if 'h' in time:
+        hour = time
+        minutes = text[application_index + 2]
+    elif 'min' in time:
+        hour = 0
+        minutes = time
+    else:
+        print(f"plus one{time}")
+        hour = 0
+        minutes = 0
+
+    return ApplicationItem(application_name=application_name,
+                           application_hour=hour,
+                           application_min=minutes)
+
+
