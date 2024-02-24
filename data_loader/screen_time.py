@@ -6,6 +6,7 @@ from dataclasses import dataclass, asdict
 import glob
 import os
 import logging
+from data_loader.transforms import grayscale_to_white_text_black_background_transform, grayscale_to_black_text_transform
 
 
 @dataclass
@@ -67,10 +68,9 @@ def load_screen_time_item(img_file: str) -> ScreenTimeItem:
         return create_screen_time_item_from_text(text)
 
 
-def convert_image_to_text(img) -> list[str]:
-    ref = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    ref = cv2.threshold(ref, 200, 200, 200)[1]
-    text = pytesseract.image_to_string(ref).split('\n')
+def convert_image_to_text(image) -> list[str]:
+    image = grayscale_to_black_text_transform(image)
+    text = pytesseract.image_to_string(image).split('\n')
     return text
 
 
