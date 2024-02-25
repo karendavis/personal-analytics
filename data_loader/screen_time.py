@@ -144,6 +144,9 @@ def create_screen_time_item_from_text(text_items: list) -> ScreenTimeItem:
 
 def create_application_item_from_text(text, application_index) -> ApplicationItem:
     application_name = text[application_index]
+    if len(text) <= application_index + 1:
+        # application name is the last item, no time was captured
+        return None
     time = text[application_index + 1]
     if 'h' in time:
         hour = time

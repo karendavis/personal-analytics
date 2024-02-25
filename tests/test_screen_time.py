@@ -61,7 +61,7 @@ folder_path = "test_data"
 
 def test_load_screen_time_data():
     results = load_screen_time_data(folder_path)
-    assert results.shape == (5, 14)
+    assert results.shape == (6, 14)
 
 
 def test_load_screen_time_data_with_invalid_folder_path():
@@ -121,3 +121,13 @@ def test_create_screen_time_item_from_text():
     assert result.total_hour == mock_screen_time_data_again.total_hour
     assert result.total_min == mock_screen_time_data_again.total_min
     assert result.applications == mock_screen_time_data_again.applications
+
+
+def test_create_screen_time_item_where_limited_application_entries():
+    result = load_screen_time_item(f"{folder_path}/29 Jan 2024 at 10:15pm.png")
+    assert result is not None
+    assert result.day == mock_screen_time_data_with_missing_applications.day
+    assert result.month == mock_screen_time_data_with_missing_applications.month
+    assert result.total_hour == mock_screen_time_data_with_missing_applications.total_hour
+    assert result.total_min == mock_screen_time_data_with_missing_applications.total_min
+    assert result.applications == mock_screen_time_data_with_missing_applications.applications
