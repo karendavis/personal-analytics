@@ -44,7 +44,7 @@ class FolderDoesNotExistError(Exception):
     pass
 
 
-application_names = ["Safari", "Messages", "DuckDuckGo", "MyFitnessPal", "Connect", "Gmail", "TheLott", "WhatsApp"]
+application_names = ["Safari", "Messages", "DuckDuckGo", "MyFitnessPal", "Connect", "Gmail", "The Lott", "WhatsApp"]
 
 
 def load_screen_time_data(folder: str) -> pd.DataFrame:
@@ -134,22 +134,32 @@ def create_screen_time_item_from_text(text_items: list) -> ScreenTimeItem:
         applications.append(create_application_item_from_text(text_items, index))
     # Drop any None applications
     applications = [application for application in applications if application is not None]
+    hours, minutes = get_hours_and_minutes(text_items, screen_time_date_idx + 2, seconds_round_up=3)
     return ScreenTimeItem(day=text_items[screen_time_date_idx + 1],
                           month=text_items[screen_time_date_idx + 2],
                           year=2024,
-                          total_hour=text_items[screen_time_date_idx + 3],
-                          total_min=text_items[screen_time_date_idx + 4],
+                          total_hour=hours,
+                          total_min=minutes,
                           applications=applications)
 
 
 def create_application_item_from_text(text, application_index) -> ApplicationItem:
     application_name = text[application_index]
+    hours, minutes = get_hours_and_minutes(text, application_index)
+    if hours is None and minutes is None:
+        return None
+    return ApplicationItem(application_name=application_name,
+                           application_hour=hours,
+                           application_min=minutes)
+
+
+def get_hours_and_minutes(text, application_index, seconds_round_up=1):
     if len(text) <= application_index + 1:
         # application name is the last item, no time was captured
-        return None
+        return None, None
     time = text[application_index + 1]
     if 'h' in time:
-        hour = time
+        hours = time
         if len(text) <= application_index + 2:
             minutes = 0
         elif 'min' in text[application_index + 2]:
@@ -157,18 +167,15 @@ def create_application_item_from_text(text, application_index) -> ApplicationIte
         else:
             minutes = 0
     elif 'min' in time:
-        hour = 0
+        hours = 0
         minutes = time
     elif 's' in time:
         # round up to a minute
-        hour = 0
-        minutes = 1
+        hours = 0
+        minutes = seconds_round_up
     else:
-        hour = 0
+        hours = 0
         minutes = 0
-
-    return ApplicationItem(application_name=application_name,
-                           application_hour=hour,
-                           application_min=minutes)
+    return hours, minutes
 
 
