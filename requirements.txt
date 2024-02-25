@@ -2,3 +2,5 @@ pandas
 opencv-python
 pytesseract
 numpy
+seaborn
+matplotlib

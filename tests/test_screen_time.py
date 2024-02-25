@@ -23,8 +23,8 @@ mock_screen_time_data = ScreenTimeItem(day='13',
 mock_screen_time_data_again = ScreenTimeItem(day='16',
                                              month='February',
                                              year='2024',
-                                             total_hour='1',
-                                             total_min='1',
+                                             total_hour='2h',
+                                             total_min='32min',
                                              applications=[ApplicationItem(application_name='Safari',
                                                                            application_hour='1h',
                                                                            application_min='59min'),
@@ -36,9 +36,22 @@ mock_screen_time_data_again = ScreenTimeItem(day='16',
                                                                            application_min='8min')
                                                            ])
 
+mock_screen_time_data_with_missing_applications = ScreenTimeItem(day='29',
+                                                                 month='January',
+                                                                 year='2024',
+                                                                 total_hour='1h',
+                                                                 total_min='42min',
+                                                                 applications=[
+                                                                     ApplicationItem(application_name='Safari',
+                                                                                     application_hour='1h',
+                                                                                     application_min='4min'),
+                                                                     ApplicationItem(application_name='WhatsApp',
+                                                                                     application_hour=0,
+                                                                                     application_min='16min'),
+                                                                     ])
 
 mock_test_data = ['10:00', '. atl > (_', 'Week Day', 'SCREEN TIME',
-                  'Today,', '16', 'February', '1', '1', '! — 0', 'M Tu Ww ‘Th F Sa Su', ', 60min.', '= 30min',
+                  'Today,', '16', 'February', '2h', '32min', '! — 0', 'M Tu Ww ‘Th F Sa Su', ', 60min.', '= 30min',
                   "'12am ‘6am '12pm ‘6pm", 'Health & Fitness Social Education', 'Smin. Smin. 2min.',
                   'MOST USED SHOW CATEGORIES', 'Safari', '1h', '59min', 'MyFitnessPal', '8min', 'Messages',
                   '8min', 'yy SChO0 kiiytGae N']
@@ -69,7 +82,7 @@ def test_load_screen_time_item():
 
 
 def test_load_screen_time_item_with_different_file():
-    result = load_screen_time_item(f"{folder_path}/16_Feb_2024_at_10.png")
+    result = load_screen_time_item(f"{folder_path}/16 Feb 2024 at 10.png")
     assert result is not None
     assert result.day == mock_screen_time_data_again.day
     assert result.month == mock_screen_time_data_again.month

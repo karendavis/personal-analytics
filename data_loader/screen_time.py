@@ -9,7 +9,7 @@ import logging
 
 from pytesseract import Output
 
-from data_loader.transforms import grayscale_to_white_text_black_background_transform, grayscale_to_black_text_transform
+from data_loader.transforms import image_transforms
 
 
 @dataclass
@@ -67,9 +67,7 @@ def load_screen_time_item(img_file: str) -> ScreenTimeItem:
     text = convert_image_to_text(img)
     text = filter_empty_text_items(text)
     # Allow for the case where there is no screen time data
-    no_data_message = "As this device is used, screen time will be reported here"
-    no_data_text = " ".join(text[-13:])
-    if no_data_message in no_data_text:
+    if not text or len(text) == 0:
         # get the date from the file name
         screen_time_date = os.path.basename(img_file).split('at')[0]
         screen_time_day = screen_time_date.split(' ')[0]
@@ -86,7 +84,8 @@ def load_screen_time_item(img_file: str) -> ScreenTimeItem:
 
 
 def convert_image_to_text(image) -> list[str]:
-    image = grayscale_to_black_text_transform(image)
+    for transform in image_transforms:
+        image = transform(image)
     text = pytesseract.image_to_data(image, output_type=Output.DICT)['text']
     return text
 
@@ -96,9 +95,24 @@ def filter_empty_text_items(text_items: list) -> list:
     text_items = [item.replace('<', '') for item in text_items]
     text_items = [item.replace('.', '') for item in text_items]
     text_items = [item.replace('>', '') for item in text_items]
+    text_items = [item.replace('!', '') for item in text_items]
+    text_items = [item.replace(':', '') for item in text_items]
+    text_items = [item.replace('-', '') for item in text_items]
+    text_items = [item.replace('_', '') for item in text_items]
+    text_items = [item.replace('—', '') for item in text_items]
+    text_items = [item.replace('©', '') for item in text_items]
+    text_items = [item.replace('#', '') for item in text_items]
+    text_items = [item.replace('Smin', '8min') for item in text_items]
+    text_items = [item.replace('Ah', '4h') for item in text_items]
+    text_items = [item.replace('Th', '1h') for item in text_items]
+    text_items = [item for item in text_items if item != '1']
+    text_items = [item for item in text_items if item != "\'"]
+    text_items = [item for item in text_items if item != "i"]
+    text_items = [item for item in text_items if item != "\\"]
+    text_items = [item for item in text_items if item != ","]
     text_items = list(filter(lambda item: item.strip(), text_items))
-    # If there are more than two instances of "safari' in the image, the first is in the top left of the screen
-    # and not part of the applications with time. If there are more than 1 remove the first instance
+    # If there are more than two instances of 'safari' in the image, the first is in the top left of the screen
+    # and not part of the applications with time section. If there are more than 1 remove the first instance
     remove_indexes = [i for i, item in enumerate(text_items) if 'Safari' in item]
     if len(remove_indexes) > 1:
         text_items.pop(remove_indexes[0])
@@ -118,7 +132,8 @@ def create_screen_time_item_from_text(text_items: list) -> ScreenTimeItem:
     applications = []
     for index in application_indexes:
         applications.append(create_application_item_from_text(text_items, index))
-
+    # Drop any None applications
+    applications = [application for application in applications if application is not None]
     return ScreenTimeItem(day=text_items[screen_time_date_idx + 1],
                           month=text_items[screen_time_date_idx + 2],
                           year=2024,
