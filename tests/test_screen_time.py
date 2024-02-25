@@ -1,8 +1,7 @@
 import pytest
 
 from data_loader.screen_time import ScreenTimeItem, ApplicationItem, load_screen_time_item, \
-    load_screen_time_data, create_screen_time_item_from_text, FolderDoesNotExistError
-
+    load_screen_time_data, create_screen_time_item_from_text, FolderDoesNotExistError, create_application_item_from_text
 
 mock_screen_time_data = ScreenTimeItem(day='13',
                                        month='February',
@@ -131,3 +130,43 @@ def test_create_screen_time_item_where_limited_application_entries():
     assert result.total_hour == mock_screen_time_data_with_missing_applications.total_hour
     assert result.total_min == mock_screen_time_data_with_missing_applications.total_min
     assert result.applications == mock_screen_time_data_with_missing_applications.applications
+
+
+def test_create_application_item_from_text():
+    text = ["Safari", "1h", "2min"]
+    application_index = 0
+    expected = ApplicationItem(application_name=text[0], application_hour=text[1], application_min=text[2])
+    result = create_application_item_from_text(text, application_index)
+    assert result == expected
+
+
+def test_create_application_item_from_text_with_no_minutes():
+    text = ["Safari", "1h"]
+    application_index = 0
+    expected = ApplicationItem(application_name=text[0], application_hour=text[1], application_min=0)
+    result = create_application_item_from_text(text, application_index)
+    assert result == expected
+
+
+def test_create_application_item_from_text_with_no_minutes_and_other_application_in_minute_spot():
+    text = ["Safari", "1h", 'Roblox']
+    application_index = 0
+    expected = ApplicationItem(application_name=text[0], application_hour=text[1], application_min=0)
+    result = create_application_item_from_text(text, application_index)
+    assert result == expected
+
+
+def test_create_application_item_from_text_with_seconds():
+    text = ["Safari", "32s", 'Roblox']
+    application_index = 0
+    expected = ApplicationItem(application_name=text[0], application_hour=0, application_min=1)
+    result = create_application_item_from_text(text, application_index)
+    assert result == expected
+
+
+def test_create_application_with_no_time():
+    text = ["Safari"]
+    application_index = 0
+    expected = None
+    result = create_application_item_from_text(text, application_index)
+    assert result == expected

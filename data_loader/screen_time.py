@@ -150,12 +150,20 @@ def create_application_item_from_text(text, application_index) -> ApplicationIte
     time = text[application_index + 1]
     if 'h' in time:
         hour = time
-        minutes = text[application_index + 2]
+        if len(text) <= application_index + 2:
+            minutes = 0
+        elif 'min' in text[application_index + 2]:
+            minutes = text[application_index + 2]
+        else:
+            minutes = 0
     elif 'min' in time:
         hour = 0
         minutes = time
+    elif 's' in time:
+        # round up to a minute
+        hour = 0
+        minutes = 1
     else:
-        print(f"plus one{time}")
         hour = 0
         minutes = 0
 
