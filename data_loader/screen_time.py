@@ -44,7 +44,7 @@ class FolderDoesNotExistError(Exception):
     pass
 
 
-application_names = ["Safari", "Messages", "DuckDuckGo", "MyFitnessPal", "Connect", "Gmail"]
+application_names = ["Safari", "Messages", "DuckDuckGo", "MyFitnessPal", "Connect", "Gmail", "TheLott", "WhatsApp"]
 
 
 def load_screen_time_data(folder: str) -> pd.DataFrame:
