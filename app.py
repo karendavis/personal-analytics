@@ -9,7 +9,7 @@ FOLDER = "/Users/karendavis/Library/Mobile Documents/iCloud~is~workflow~my~workf
 
 def run():
     df = load_screen_time_data(FOLDER)
-    df.to_csv("~/Development/personal-data-analysis/screen_time_data.csv")
+    df.to_csv("~/Development/personal-data-analysis/screen_time_data.csv",  index=False)
 
 
 if __name__ == '__main__':
