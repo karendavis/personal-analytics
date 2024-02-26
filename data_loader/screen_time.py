@@ -15,8 +15,8 @@ from data_loader.transforms import image_transforms
 @dataclass
 class ApplicationItem:
     application_name: str
-    application_hour: str
-    application_min: str
+    application_hour: int
+    application_min: int
 
     def dict(self, index):
         return {f'application_name_{index}': self.application_name, f'application_hour_{index}': self.application_hour,
@@ -28,8 +28,8 @@ class ScreenTimeItem:
     day: str
     month: str
     year: str
-    total_hour: str
-    total_min: str
+    total_hour: int
+    total_min: int
     applications: [ApplicationItem]
 
     def dict(self):
@@ -159,16 +159,16 @@ def get_hours_and_minutes(text, application_index, seconds_round_up=1):
         return None, None
     time = text[application_index + 1]
     if 'h' in time:
-        hours = time
+        hours = convert_string_to_digit(time, 'h')
         if len(text) <= application_index + 2:
             minutes = 0
         elif 'min' in text[application_index + 2]:
-            minutes = text[application_index + 2]
+            minutes = convert_string_to_digit(text[application_index + 2], 'min')
         else:
             minutes = 0
     elif 'min' in time:
         hours = 0
-        minutes = time
+        minutes = convert_string_to_digit(time, 'min')
     elif 's' in time:
         # round up to a minute
         hours = 0
@@ -177,5 +177,15 @@ def get_hours_and_minutes(text, application_index, seconds_round_up=1):
         hours = 0
         minutes = 0
     return hours, minutes
+
+
+def convert_string_to_digit(string, digit_type):
+    string_digit = string.replace(digit_type, '')
+    try:
+        digit = int(string_digit)
+    except ValueError:
+        logging.warning(f"Could not create int from  {digit_type} time string, using 0 instead")
+        digit = 0
+    return digit
 
 
