@@ -1,4 +1,5 @@
 import pytest
+import pathlib
 
 from data_loader.screen_time import ScreenTimeItem, ApplicationItem, load_screen_time_item, \
     load_screen_time_data, create_screen_time_item_from_text, FolderDoesNotExistError, create_application_item_from_text
@@ -55,7 +56,7 @@ mock_test_data = ['10:00', '. atl > (_', 'Week Day', 'SCREEN TIME',
                   'MOST USED SHOW CATEGORIES', 'Safari', '1h', '59min', 'MyFitnessPal', '8min', 'Messages',
                   '8min', 'yy SChO0 kiiytGae N']
 
-folder_path = "test_data"
+folder_path = f"{pathlib.Path(__file__).parent.resolve()}/test_data"
 
 
 def test_load_screen_time_data():
