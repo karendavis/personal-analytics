@@ -1,9 +1,9 @@
 import cv2
 import numpy as np
 
-top_mask_percentage_start = .20
-top_mask_percentage_end = .33
-bottom_mask_percentage_start = .77
+TOP_MASK_PERCENTAGE_START = 0.20
+TOP_MASK_PERCENTAGE_END = 0.33
+BOTTOM_MASK_PERCENTAGE_START = 0.77
 
 
 def grayscale_to_black_text_transform(image):
@@ -15,35 +15,37 @@ def grayscale_to_black_text_transform(image):
 
 
 def grayscale_to_black_text_transform_with_masking(image):
-    # Masking the image, the middle content is largely graphs and is the same colour as the application time text that
-    # we want to capture
+    # Masking the image, the middle content is largely graphs and is the same colour as the
+    # application time text that we want to capture
 
     # create a mask that will include the top section
     mask = np.zeros(image.shape[:2], np.uint8)
     image_len = image.shape[0]
-    top_mask_start = int(image_len * top_mask_percentage_start)
-    mask_len = int(image_len * top_mask_percentage_end)
+    top_mask_start = int(image_len * TOP_MASK_PERCENTAGE_START)
+    mask_len = int(image_len * TOP_MASK_PERCENTAGE_END)
     mask[top_mask_start:mask_len] = 255
 
     # create a mask that will include the bottom section (last 20% or so of screen)
-    bottom_mask = int(image_len * bottom_mask_percentage_start)
+    bottom_mask = int(image_len * BOTTOM_MASK_PERCENTAGE_START)
     mask[bottom_mask:image_len] = 255
     masked_image = cv2.bitwise_and(image, image, mask=mask)
     return masked_image
 
 
 def light_grey_text_to_black_text_transform(image):
-    # The bottom light grey text is very light and difficult to read. If we manually convert it to black before
-    # converting the entire image to grayscale it will hopefully make it easier to read.
+    # The bottom light grey text is very light and difficult to read. If we manually convert
+    # it to black before converting the entire image to grayscale it will hopefully make it
+    # easier to read.
 
-    # iterating over the bottom section of the image only (got to be a better/faster way to do this)
+    # iterating over the bottom section of the image only (got to be a better/faster way to do
+    # this)
     image_len = image.shape[0]
     image_width = image.shape[1]
     black_bgr = [0, 0, 0]
-    for i in range(int(image_len * bottom_mask_percentage_start), image_len - 1):
+    for i in range(int(image_len * BOTTOM_MASK_PERCENTAGE_START), image_len - 1):
         for j in range(0, image_width - 1):
             bgr_array = image[i, j]
-            if all([250 >= pixel >= 180 for pixel in bgr_array]):
+            if all(250 >= pixel >= 180 for pixel in bgr_array):
                 image[i, j] = black_bgr
             j += 1
         i += 1
@@ -60,4 +62,7 @@ def grayscale_to_white_text_black_background_transform(image):
     return cv2.threshold(image, 200, 200, 200)[1]
 
 
-image_transforms = [grayscale_to_black_text_transform_with_masking, grayscale_to_black_text_transform]
+image_transforms = [
+    grayscale_to_black_text_transform_with_masking,
+    grayscale_to_black_text_transform,
+]
