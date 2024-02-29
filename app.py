@@ -1,6 +1,6 @@
 import logging
 import sys
-from data_loader.screen_time import load_screen_time_data
+from screentime.data_loader import load_screen_time_data
 from config import config
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)

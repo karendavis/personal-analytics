@@ -1,7 +1,7 @@
 import pathlib
 import pytest
 
-from data_loader.screen_time import (
+from screentime.data_loader import (
     ScreenTimeItem,
     ApplicationItem,
     load_screen_time_item,

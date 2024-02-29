@@ -10,7 +10,7 @@ import pytesseract
 
 from pytesseract import Output
 
-from data_loader.transforms import image_transforms
+from screentime.transforms import image_transforms
 
 
 @dataclass
