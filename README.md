@@ -1,5 +1,15 @@
 
+### To setup a local environment
+I used virtualenv to set up a local environment
+```shell
+cd personal-analytics
+python3 -m venv .venv
+source .venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+pip install -r tests/test_requirements.txt
 
+```
 
 
 
