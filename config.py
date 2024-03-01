@@ -2,9 +2,9 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    TOP_MASK_PERCENTAGE_START: float
-    TOP_MASK_PERCENTAGE_END: float
-    BOTTOM_MASK_PERCENTAGE_START: float
+    top_mask_percentage_start: float
+    top_mask_percentage_end: float
+    bottom_mask_percentage_start: float
 
     class Config:
         env_file = ".env"

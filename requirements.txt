@@ -4,5 +4,5 @@ pytesseract
 numpy
 seaborn
 matplotlib
-pydantic[dotenv]
+python-dotenv
 pydantic-settings

@@ -2,9 +2,9 @@ import cv2
 import numpy as np
 from config import config
 
-TOP_MASK_PERCENTAGE_START = config.TOP_MASK_PERCENTAGE_START
-TOP_MASK_PERCENTAGE_END = config.TOP_MASK_PERCENTAGE_END
-BOTTOM_MASK_PERCENTAGE_START = config.BOTTOM_MASK_PERCENTAGE_START
+TOP_MASK_PERCENTAGE_START = config.top_mask_percentage_start
+TOP_MASK_PERCENTAGE_END = config.top_mask_percentage_end
+BOTTOM_MASK_PERCENTAGE_START = config.bottom_mask_percentage_start
 
 
 def grayscale_to_black_text_transform(image):
