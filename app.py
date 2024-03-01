@@ -7,7 +7,7 @@ logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 
 def run():
-    folder = config.icloud_folder + config.screen_time_folder
+    folder = config.icloud_folder + config.screentime_folder
     df = load_screen_time_data(folder)
     df.to_csv("~/Development/personal-data-analysis/screen_time_data.csv", index=False)
 
