@@ -19,14 +19,14 @@ def grayscale_to_black_text_transform_with_masking(image):
     # Masking the image, the middle content is largely graphs and is the same colour as the
     # application time text that we want to capture
 
-    # create a mask that will include the top section
+    # create a mask that will include the top section - total screen time
     mask = np.zeros(image.shape[:2], np.uint8)
     image_len = image.shape[0]
     top_mask_start = int(image_len * TOP_MASK_PERCENTAGE_START)
     mask_len = int(image_len * TOP_MASK_PERCENTAGE_END)
     mask[top_mask_start:mask_len] = 255
 
-    # create a mask that will include the bottom section (last 20% or so of screen)
+    # create a mask that will include the bottom section (last 20% or so of screen) - app screen time
     bottom_mask = int(image_len * BOTTOM_MASK_PERCENTAGE_START)
     mask[bottom_mask:image_len] = 255
     masked_image = cv2.bitwise_and(image, image, mask=mask)
