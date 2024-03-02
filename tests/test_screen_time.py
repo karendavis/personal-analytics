@@ -98,7 +98,7 @@ folder_path = f"{pathlib.Path(__file__).parent.resolve()}/test_data"
 
 def test_load_screen_time_data():
     results = load_screen_time_data(folder_path)
-    assert results.shape == (6, 14)
+    assert results.shape == (7, 14)
 
 
 def test_load_screen_time_data_with_invalid_folder_path():
@@ -148,6 +148,16 @@ def test_load_screen_time_item_with_no_screen_time_data():
     assert result.day == "28"
     assert result.month == "Jan"
     assert result.year == "2024"
+
+
+def test_load_screen_time_item_where_total_time_is_zero_seconds():
+    result = load_screen_time_item(f"{folder_path}/zero_seconds_of_screentime.png")
+    assert result is not None
+    assert result.day == "27"
+    assert result.month == "January"
+    assert result.total_hour == 0
+    assert result.total_min == 0
+    assert len(result.applications) == 0
 
 
 def test_create_screen_time_item_from_text():

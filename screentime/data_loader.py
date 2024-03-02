@@ -210,9 +210,12 @@ def get_hours_and_minutes(text, application_index, seconds_round_up=1):
         hours = 0
         minutes = convert_string_to_digit(time, "min")
     elif "s" in time:
-        # round up to a minute
         hours = 0
-        minutes = seconds_round_up
+        if time in ["0s", "os", "Os"]:
+            minutes = 0
+        else:
+            # round up to a minute or round up parameter
+            minutes = seconds_round_up
     else:
         hours = 0
         minutes = 0
