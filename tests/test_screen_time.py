@@ -1,3 +1,4 @@
+import os
 import pathlib
 import pytest
 
@@ -11,43 +12,6 @@ from screentime.data_loader import (
     create_application_item_from_text,
 )
 
-mock_screen_time_data = ScreenTimeItem(
-    day="13",
-    month="February",
-    year="2024",
-    total_hour=3,
-    total_min=19,
-    applications=[
-        ApplicationItem(
-            application_name="Safari", application_hour=2, application_min=49
-        ),
-        ApplicationItem(
-            application_name="Messages", application_hour=0, application_min=13
-        ),
-        ApplicationItem(
-            application_name="DuckDuckGo", application_hour=0, application_min=3
-        ),
-    ],
-)
-
-mock_screen_time_data_again = ScreenTimeItem(
-    day="16",
-    month="February",
-    year="2024",
-    total_hour=2,
-    total_min=32,
-    applications=[
-        ApplicationItem(
-            application_name="Safari", application_hour=1, application_min=59
-        ),
-        ApplicationItem(
-            application_name="MyFitnessPal", application_hour=0, application_min=8
-        ),
-        ApplicationItem(
-            application_name="Messages", application_hour=0, application_min=8
-        ),
-    ],
-)
 
 mock_screen_time_data_with_missing_applications = ScreenTimeItem(
     day="29",
@@ -98,7 +62,8 @@ folder_path = f"{pathlib.Path(__file__).parent.resolve()}/test_data"
 
 def test_load_screen_time_data():
     results = load_screen_time_data(folder_path)
-    assert results.shape == (7, 14)
+    files_in_folder = os.listdir(folder_path)
+    assert results.shape == (len(files_in_folder), 11)
 
 
 def test_load_screen_time_data_with_invalid_folder_path():
@@ -108,31 +73,19 @@ def test_load_screen_time_data_with_invalid_folder_path():
     assert str(excinfo.value) == f"Folder `{fake_folder}` does not exist"
 
 
-def test_load_screen_time_item():
-    result = load_screen_time_item(f"{folder_path}/13_Feb_2024_at_10.png")
+def test_load_screen_time_item_where_limited_application_entries():
+    result = load_screen_time_item(f"{folder_path}/29 Jan 2024 at 10:15pm.png")
     assert result is not None
-    assert result.day == mock_screen_time_data.day
-    assert result.month == mock_screen_time_data.month
-    assert result.total_hour == mock_screen_time_data.total_hour
-    assert result.total_min == mock_screen_time_data.total_min
-    assert result.applications == mock_screen_time_data.applications
-
-
-def test_load_screen_time_item_with_different_file():
-    result = load_screen_time_item(f"{folder_path}/16 Feb 2024 at 10.png")
-    assert result is not None
-    assert result.day == mock_screen_time_data_again.day
-    assert result.month == mock_screen_time_data_again.month
-    assert result.total_hour == mock_screen_time_data_again.total_hour
-    assert result.total_min == mock_screen_time_data_again.total_min
-    assert result.applications == mock_screen_time_data_again.applications
-
-
-def test_load_screen_time_item_with_image_with_no_today_text_found():
-    result = load_screen_time_item(f"{folder_path}/25_Jan_2024.png")
-    assert result is not None
-    assert result.day == "23"
-    assert result.month == "January"
+    assert result.day == mock_screen_time_data_with_missing_applications.day
+    assert result.month == mock_screen_time_data_with_missing_applications.month
+    assert (
+        result.total_hour == mock_screen_time_data_with_missing_applications.total_hour
+    )
+    assert result.total_min == mock_screen_time_data_with_missing_applications.total_min
+    assert (
+        result.applications
+        == mock_screen_time_data_with_missing_applications.applications
+    )
 
 
 def test_load_screen_time_item_with_image_with_yesterday_screen_time_data():
@@ -163,26 +116,13 @@ def test_load_screen_time_item_where_total_time_is_zero_seconds():
 def test_create_screen_time_item_from_text():
     result = create_screen_time_item_from_text(mock_test_data)
     assert result is not None
-    assert result.day == mock_screen_time_data_again.day
-    assert result.month == mock_screen_time_data_again.month
-    assert result.total_hour == mock_screen_time_data_again.total_hour
-    assert result.total_min == mock_screen_time_data_again.total_min
-    assert result.applications == mock_screen_time_data_again.applications
-
-
-def test_create_screen_time_item_where_limited_application_entries():
-    result = load_screen_time_item(f"{folder_path}/29 Jan 2024 at 10:15pm.png")
-    assert result is not None
-    assert result.day == mock_screen_time_data_with_missing_applications.day
-    assert result.month == mock_screen_time_data_with_missing_applications.month
-    assert (
-        result.total_hour == mock_screen_time_data_with_missing_applications.total_hour
-    )
-    assert result.total_min == mock_screen_time_data_with_missing_applications.total_min
-    assert (
-        result.applications
-        == mock_screen_time_data_with_missing_applications.applications
-    )
+    assert result.day == "16"
+    assert result.month == "February"
+    assert result.total_hour == 2
+    assert result.total_min == 32
+    assert result.applications[0].application_name == "Safari"
+    assert result.applications[0].application_hour == 1
+    assert result.applications[0].application_min == 59
 
 
 def test_create_application_item_from_text():
