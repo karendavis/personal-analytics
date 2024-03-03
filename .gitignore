@@ -7,6 +7,9 @@
 # env property file
 .env
 
+# data sets created when running the application
+data/*
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
