@@ -15,7 +15,7 @@ def grayscale_to_black_text_transform(image):
     return image
 
 
-def grayscale_to_black_text_transform_with_masking(image):
+def masking_graphs_transform(image):
     # Masking the image, the middle content is largely graphs and is the same colour as the
     # application time text that we want to capture
 
@@ -64,6 +64,6 @@ def grayscale_to_white_text_black_background_transform(image):
 
 
 image_transforms = [
-    grayscale_to_black_text_transform_with_masking,
+    masking_graphs_transform,
     grayscale_to_black_text_transform,
 ]
