@@ -54,6 +54,7 @@ def load_screen_time_data(folder: str) -> pd.DataFrame:
         raise FolderDoesNotExistError(f"Folder `{folder}` does not exist")
 
     image_files = glob.glob(f"{folder}/*.png")
+    image_files.sort(key=os.path.getmtime)
     screen_time_data = []
     for image_file in image_files:
         screen_time_data.append(load_screen_time_item(image_file))
