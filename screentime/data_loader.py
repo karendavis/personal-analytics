@@ -6,11 +6,9 @@ import re
 import cv2
 import pandas as pd
 import pytesseract
-
-
 from pytesseract import Output
-
 from screentime.transforms import image_transforms
+from config import config
 
 
 @dataclass
@@ -49,18 +47,6 @@ class ScreenTimeItem:
 
 class FolderDoesNotExistError(Exception):
     pass
-
-
-application_names = [
-    "Safari",
-    "Messages",
-    "DuckDuckGo",
-    "MyFitnessPal",
-    "Connect",
-    "Gmail",
-    "The Lott",
-    "WhatsApp",
-]
 
 
 def load_screen_time_data(folder: str) -> pd.DataFrame:
@@ -159,7 +145,7 @@ def create_screen_time_item_from_text(text_items: list) -> ScreenTimeItem:
     application_indexes = [
         i
         for i, item in enumerate(text_items)
-        if (any(name in item for name in application_names))
+        if (any(name in item for name in config.application_names))
     ]
     applications = []
     for index in application_indexes:
