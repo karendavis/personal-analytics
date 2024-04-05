@@ -1,6 +1,6 @@
 
 ### To setup a local environment
-I used virtualenv to set up a local environment
+I used virtualenv to set up a local environment. requirements.txt contains the code dependencies, tests/test_requirements.txt contains the build and test dependencies: pytest, pre-commit, nbnstripout etc
 ```shell
 cd personal-analytics
 python3 -m venv .venv
