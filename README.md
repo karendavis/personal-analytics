@@ -59,10 +59,12 @@ nbstripout --install
 ```
 
 If you want to see that this has been set up successfully as a filter use
+
 ```shell
 cat .git/config
 ```
-to see the filter config    |    and
+to see the filter config:
+
 ```shell
 cat .git/info/attributes
 ```
