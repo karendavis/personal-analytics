@@ -12,7 +12,7 @@ brew install tesseract
 ```
 
 ### To setup a local environment
-The instructions below use virtualenv to set up a local environment. The requirements.txt file contains the code dependencies. The tests/test_requirements.txt file contains the build and test dependencies: pytest    |    pre-commit    |     nbnstripout etc
+The instructions below use virtualenv to set up a local environment. The requirements.txt file contains the code dependencies. The tests/test_requirements.txt file contains the build and test dependencies: pytest, pre-commit, nbnstripout etc
 ```shell
 cd personal-analytics
 python3 -m venv .venv
