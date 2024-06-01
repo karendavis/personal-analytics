@@ -1,5 +1,5 @@
-## Personal Data analytics
-This repository contains the code for processing screenshots of screen time data and extracting the text and time using OCR(pytesseract). It assumes a mac development environment and local running only.
+## Personal analytics
+This repository contains the code for processing screenshots of screen time data and extracting the text and time using OCR(pytesseract). The intent is to add the ability to ingest data from more sources: e.g Garmin, MyFitnessPal etc. It assumes a mac development environment and local running only.
 <br>
 
 For more details see the blog post [here](https://karendavis.io/posts/01_screentime_analytics/).
