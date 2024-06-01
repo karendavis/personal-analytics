@@ -77,6 +77,13 @@ There are two parameters in this file that need to be updated:
 ```ICLOUD_FOLDER="/Users/{username}/Library/Mobile Documents/iCloud~is~workflow~my~workflows/Documents"``` Update the {username} as appropriate
 2. The ```APP_LIST``` parameter. The dataloader class matches the applications found against the ones in this list. If an application is not listed here it won't be matched for time spent and end up in the outputted csv file
 
+### To run the tests
+Create a .env file in the tests folder with the same parameters and values as the environment variables above. To run the tests
+```shell
+python -m pytest tests/test_screen_time.py
+```
+or run from your ide
+
 ### To run the dataloader
 app.py contains the main method that calls the dataloader to load the data from the iCloud folder, convert it to text using OCR and outputs a csv file to ```data/screen_time_data.csv```. It runs in batch mode and processes all the images in the folder each time it runs
 ```shell
@@ -87,6 +94,8 @@ The csv file should now be generated in data/screen_time_data.csv with the follo
 |   day    |      month |       year |     total_hour |      total_min |   application_name_0    |    application_hour_0 | application_min_0 | application_name_1     |     application_hour_1 | application_min_1 | application_name_2     |     application_hour_2 |        application_min_2 |
 |   ---    |-----------:|-----------:|---------------:|---------------:|:-----------------------:|----------------------:|------------------:|:-----------------------|-----------------------:|------------------:|:-----------------------|-----------------------:|-------------------------:|
 |    1     |          1 |       2024 |              1 |             50 |         Safari          |                     0 |                45 |Netflix                 |                      0 |                40 | Gmail                  |                      0 |                       25 |
+
+
 
 ### To visualise the data with jupyter notebook
 #### Setup the ipykernel
